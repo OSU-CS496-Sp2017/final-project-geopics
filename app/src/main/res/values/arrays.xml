@@ -2,18 +2,28 @@
 <resources>
 
     <string-array name="pref_sort_entries">
-        <item>Best match</item>
-        <item>Stars</item>
-        <item>Forks</item>
-        <item>Most recently updated</item>
+        <item>Distance</item>
+        <item>Popularity</item>
+    </string-array>
+
+    <string-array name="pref_sort_values">
+        <item>distance</item>
+        <item>popularity</item>
     </string-array>
 
 
-    <string-array name="pref_sort_values">
-        <item></item>
-        <item>stars</item>
-        <item>forks</item>
-        <item>updated</item>
+    <string-array name="pref_search_entries">
+        <item>Landscape</item>
+        <item>Sky</item>
+        <item>Buildings</item>
+        <item>Plants</item>
+    </string-array>
+
+    <string-array name="pref_search_values">
+        <item>landscape</item>
+        <item>sky</item>
+        <item>building</item>
+        <item>plants</item>
     </string-array>
 
 </resources>

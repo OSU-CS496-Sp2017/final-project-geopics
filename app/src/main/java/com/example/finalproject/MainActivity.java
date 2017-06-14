@@ -2,6 +2,7 @@ package com.example.finalproject;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
@@ -14,6 +15,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.content.Loader;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.preference.PreferenceManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.StaggeredGridLayoutManager;
 import android.util.Log;
@@ -32,7 +34,7 @@ import java.io.IOException;
 
 
 public class MainActivity extends AppCompatActivity
-        implements LoaderManager.LoaderCallbacks<String>, FlickrPhotoGridAdapter.OnPhotoItemClickListener, LocationListener {
+        implements SharedPreferences.OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<String>, FlickrPhotoGridAdapter.OnPhotoItemClickListener, LocationListener {
 
     private static final String TAG = "YOURTAG";
     private static final int FLICKR_EXPLORE_LOADER_ID = 0;
@@ -59,6 +61,8 @@ public class MainActivity extends AppCompatActivity
         mPhotosRV.setLayoutManager(new StaggeredGridLayoutManager(NUM_PHOTO_COLUMNS, StaggeredGridLayoutManager.VERTICAL));
         mPhotosRV.setHasFixedSize(true);
         mPhotosRV.setAdapter(mAdapter);
+
+        PreferenceManager.getDefaultSharedPreferences(this).registerOnSharedPreferenceChangeListener(this);
 
         Button button = (Button) findViewById(R.id.refreshButton);
         button.setOnClickListener(new View.OnClickListener() {
@@ -113,7 +117,9 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public String loadInBackground() {
-                String flickrExploreURL = PhotoUtils.buildFlickrGeoSearchURL(SearchPreferences.getSortMethod());
+                String flickrExploreURL = PhotoUtils.buildFlickrGeoSearchURL(
+                        SearchPreferences.getSortMethod(),
+                        SearchPreferences.getSearchTerm());
                 Log.d(TAG, flickrExploreURL);
                 String exploreResults = null;
                 try {
@@ -203,6 +209,44 @@ public class MainActivity extends AppCompatActivity
     }
 
     public void reloadImages () {
+        getSupportLoaderManager().restartLoader(FLICKR_EXPLORE_LOADER_ID, null, this);
+    }
+
+    @Override
+    public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+        Log.d("MYLOG", "preference change in main... ");
+
+        // SET SORT METHOD
+        String sortMethod = sharedPreferences.getString(getString(R.string.pref_sort_key),
+                getString(R.string.pref_sort_default));
+        switch (sortMethod){
+            case "distance":
+                SearchPreferences.setSortMethod("");
+                break;
+            case "popularity":
+                SearchPreferences.setSortMethod("interestingness-desc");
+                break;
+        }
+
+        // SET SEARCH TERM
+        String searchTerm = sharedPreferences.getString(getString(R.string.pref_search_key),
+                getString(R.string.pref_search_default));
+        switch (searchTerm){
+            case "landscape":
+                SearchPreferences.setSearchTerm("landscape");
+                break;
+            case "sky":
+                SearchPreferences.setSearchTerm("sky");
+                break;
+            case "building":
+                SearchPreferences.setSearchTerm("building");
+                break;
+            case "plants":
+                SearchPreferences.setSearchTerm("flower");
+                break;
+        }
+
+
         getSupportLoaderManager().restartLoader(FLICKR_EXPLORE_LOADER_ID, null, this);
     }
 }

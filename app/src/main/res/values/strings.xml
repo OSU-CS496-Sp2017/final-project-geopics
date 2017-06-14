@@ -5,5 +5,9 @@
 
     <string name="pref_sort_key">pref_sort</string>
     <string name="pref_sort_title">Sort by</string>
-    <string name="pref_sort_default">stars</string>
+    <string name="pref_sort_default">distance</string>
+
+    <string name="pref_search_key">pref_search</string>
+    <string name="pref_search_title">Search by</string>
+    <string name="pref_search_default">landscape</string>
 </resources>

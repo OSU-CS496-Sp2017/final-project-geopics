@@ -27,8 +27,8 @@ public class PhotoUtils {
     private static final String[] FLICKR_API_EXTRAS = {"url_l", "url_m", "owner_name", "description", "date_upload", "geo", "tags"};
 
     // Added parameters: text=landscape&media=photos&lat=44.571082&lon=-123.27871&radius=1
-    private static final String FLICKR_API_TAG_PARAM = "tag";
-    private static final String FLICKR_API_TAG = "landscape, building, architecture, nature, -kid";
+    private static final String FLICKR_API_TEXT_PARAM = "text";
+    // private static final String FLICKR_API_TAG = "landscape, building, architecture, nature, -kid";
 
     private static final String FLICKR_API_MEDIA_PARAM = "media";
     private static final String FLICKR_API_MEDIA_TYPE = "photos";
@@ -79,7 +79,7 @@ public class PhotoUtils {
     }
 
 
-    public static String buildFlickrGeoSearchURL(String sortMethod) {
+    public static String buildFlickrGeoSearchURL(String sortMethod, String searchTerm) {
         return Uri.parse(FLICKR_API_BASE_URL).buildUpon()
                 .appendQueryParameter(FLICKR_API_METHOD_PARAM, FLICKR_API_SEARCH_METHOD)
                 .appendQueryParameter(FLICKR_API_KEY_PARAM, FLICKR_API_KEY)
@@ -88,7 +88,7 @@ public class PhotoUtils {
                 .appendQueryParameter(FLICKR_API_LAT_PARAM, Double.toString(currentLat))
                 .appendQueryParameter(FLICKR_API_LON_PARAM, Double.toString(currentLon))
                 .appendQueryParameter(FLICKR_API_RADIUS_PARAM, FLICKR_API_RADIUS)
-                .appendQueryParameter(FLICKR_API_TAG_PARAM, FLICKR_API_TAG)
+                .appendQueryParameter(FLICKR_API_TEXT_PARAM, searchTerm)
                 .appendQueryParameter(FLICKR_API_MEDIA_PARAM, FLICKR_API_MEDIA_TYPE)
                 .appendQueryParameter(FLICKR_API_SORT_PARAM, sortMethod)
                 .appendQueryParameter(FLICKR_API_EXTRAS_PARAM, TextUtils.join(",", FLICKR_API_EXTRAS))
