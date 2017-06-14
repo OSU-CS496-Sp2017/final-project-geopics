@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<items version="2" >
+
+    <item
+        is-multidex="true"
+        jar="/Users/Frog/Desktop/FinalProject/app/build/intermediates/incremental-runtime-classes/debug/instant-run.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="510aa6efc159983dfbffa676a0dae37568c0a46f">
+        <dex dex="/Users/Frog/Desktop/FinalProject/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run_994e2e8d9d51e0edf1a1f5d978274126250a0ec6/classes.dex" />
+    </item>
+    <item
+        is-multidex="true"
+        jar="/Users/Frog/Desktop/FinalProject/app/build/intermediates/incremental-classes/debug/instant-run-bootstrap.jar"
+        jumboMode="true"
+        optimize="true"
+        revision="25.0.2"
+        sha1="1b2ea564e9c22342e0e5c5bbd521f3305d8c540d">
+        <dex dex="/Users/Frog/Desktop/FinalProject/app/build/intermediates/transforms/dex/debug/folders/1000/10000/instant-run-bootstrap_29bd352c8a8ffc5d6f3cb3ae7adb6e195579c749/classes.dex" />
+    </item>
+
+</items>
