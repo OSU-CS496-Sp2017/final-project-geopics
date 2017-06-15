@@ -45,9 +45,10 @@
         android:id="@+id/tv_date_upload"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
         android:paddingLeft="20dp"
-        android:paddingRight="20dp"/>
+        android:paddingRight="20dp"
+        android:text="TextView"
+        android:textSize="0sp" />
 
     <TextView
         android:id="@+id/tv_lat"

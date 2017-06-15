@@ -36,9 +36,11 @@ import java.io.IOException;
 public class MainActivity extends AppCompatActivity
         implements SharedPreferences.OnSharedPreferenceChangeListener, LoaderManager.LoaderCallbacks<String>, FlickrPhotoGridAdapter.OnPhotoItemClickListener, LocationListener {
 
-    private static final String TAG = "YOURTAG";
-    private static final int FLICKR_EXPLORE_LOADER_ID = 0;
+    private static final String TAG = "CUSTOMDEBUG";
+    private static final int FLICKR_EXPLORE_LOADER_ID = 10;
     private static final int NUM_PHOTO_COLUMNS = 3;
+    private static final String CACHED_PHOTOS_KEY = "Cached Photos";
+    private static String cachedPhotos = null;
 
     private RecyclerView mPhotosRV;
     private ProgressBar mLoadingIndicatorPB;
@@ -68,7 +70,7 @@ public class MainActivity extends AppCompatActivity
         button.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 singleGPSRequest();
-                reloadImages();
+                reloadImages(null);
             }
         });
 
@@ -78,13 +80,36 @@ public class MainActivity extends AppCompatActivity
             singleGPSRequest();
         }
 
-        getSupportLoaderManager().initLoader(FLICKR_EXPLORE_LOADER_ID, null, this);
+        /*
+        if (getSupportLoaderManager().getLoader(FLICKR_EXPLORE_LOADER_ID) != null) {
+            Log.d(TAG, getSupportLoaderManager().getLoader(FLICKR_EXPLORE_LOADER_ID).toString());
+        } else {
+            Log.d(TAG, "getLoader null");
+        }
+        */
+
+
+        if (savedInstanceState != null && savedInstanceState.containsKey(CACHED_PHOTOS_KEY)) {
+            reloadImages(savedInstanceState);
+        } else {
+            getSupportLoaderManager().initLoader(FLICKR_EXPLORE_LOADER_ID, null, this);
+            reloadImages(null);
+        }
+
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.main, menu);
         return true;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        if (cachedPhotos != null) {
+            outState.putString(CACHED_PHOTOS_KEY, cachedPhotos);
+        }
     }
 
     @Override
@@ -100,18 +125,25 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
-    public Loader<String> onCreateLoader(int id, Bundle args) {
+    public Loader<String> onCreateLoader(int id, final Bundle args) {
         return new AsyncTaskLoader<String>(this) {
 
-            String mExploreResultsJSON;
+            String mSearchResultsJSON;
 
             @Override
             protected void onStartLoading() {
-                if (mExploreResultsJSON != null) {
-                    deliverResult(mExploreResultsJSON);
+                if (args != null) {
+                    Log.d("Caching", "### loading cached photos...");
+                    deliverResult(args.getString(CACHED_PHOTOS_KEY));
                 } else {
-                    mLoadingIndicatorPB.setVisibility(View.VISIBLE);
-                    forceLoad();
+                    if (mSearchResultsJSON != null) {
+                        Log.d("Caching", "### loading cached photos...");
+                        deliverResult(mSearchResultsJSON);
+                    } else {
+                        Log.d("Caching", "### loading from HTTP...");
+                        mLoadingIndicatorPB.setVisibility(View.VISIBLE);
+                        forceLoad();
+                    }
                 }
             }
 
@@ -133,7 +165,7 @@ public class MainActivity extends AppCompatActivity
 
             @Override
             public void deliverResult(String data) {
-                mExploreResultsJSON = data;
+                mSearchResultsJSON = data;
                 super.deliverResult(data);
             }
         };
@@ -143,6 +175,8 @@ public class MainActivity extends AppCompatActivity
     public void onLoadFinished(Loader<String> loader, String data) {
         mLoadingIndicatorPB.setVisibility(View.INVISIBLE);
         if (data != null) {
+            cachedPhotos = data;
+
             mLoadingErrorMessageTV.setVisibility(View.INVISIBLE);
             mPhotosRV.setVisibility(View.VISIBLE);
             mPhotos = PhotoUtils.parseFlickrExploreResultsJSON(data);
@@ -208,8 +242,12 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
-    public void reloadImages () {
-        getSupportLoaderManager().restartLoader(FLICKR_EXPLORE_LOADER_ID, null, this);
+    public void reloadImages (Bundle args) {
+        if (args != null) {
+            getSupportLoaderManager().restartLoader(FLICKR_EXPLORE_LOADER_ID, args, this);
+        } else {
+            getSupportLoaderManager().restartLoader(FLICKR_EXPLORE_LOADER_ID, null, this);
+        }
     }
 
     @Override
@@ -250,4 +288,3 @@ public class MainActivity extends AppCompatActivity
         getSupportLoaderManager().restartLoader(FLICKR_EXPLORE_LOADER_ID, null, this);
     }
 }
-
